@@ -1,0 +1,4 @@
+Dataset,OpenMP real (s),OpenMP compute (s),CUDA real (s),Kernel count,Speedup (CPU/GPU)
+graph1MW_6.txt,0.64,0.007596,2.48,12,0.258064516
+graph4096.txt,0.06,0.062258,1.71,8,0.035087719
+graph65536.txt,0.05,0.00095,1.74,10,0.028735632
