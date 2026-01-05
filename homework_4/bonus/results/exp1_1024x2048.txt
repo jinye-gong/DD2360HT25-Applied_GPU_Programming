@@ -1,0 +1,30 @@
+Output matrix dim: 1024 x 1024
+
+CPU reference result:
+timing: 4504.786 ms
+
+CUDA gemm result:
+max error vs CPU: 0.003906
+timing: 6.833 ms
+
+CUDA tiled_gemm with tile [8, 8] result:
+max error vs CPU: 0.003906
+timing: 8.566 ms
+
+CUDA tiled_gemm with tile [16, 16] result:
+max error vs CPU: 0.003906
+timing: 7.253 ms
+
+CUDA tiled_gemm with tile [32, 32] result:
+max error vs CPU: 0.003906
+timing: 8.286 ms
+
+=== WMMA (Tensor Core) Kernel ===
+WMMA kernel result:
+Fragment dimensions: 16x16x16
+Total fragments used: 16384
+Total warps: 16384
+max error vs CPU: 3.097656e+00
+avg error vs CPU: 9.831694e-01
+timing: 5.097 ms
+

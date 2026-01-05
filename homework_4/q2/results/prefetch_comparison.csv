@@ -1,0 +1,3 @@
+dimX,prefetch_enabled,time_us,speedup
+1024,true,141366,1.00
+1024,false,149590,1.05

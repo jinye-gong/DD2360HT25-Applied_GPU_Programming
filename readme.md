@@ -38,7 +38,25 @@ Folder: `HW3/`
 
 
 
+### 4. Assignment IV – CUDA Optimization, NVIDIA Libraries & Tensor Cores
 
+Folder: `assignment_4/`
+
+- **Q1 – 1D Convolution (Tiled Kernel)**
+  - Implemented a basic 1D convolution and an optimized **shared-memory tiled kernel**.
+  - Each block loads a tile of input data (with halo) into shared memory, then computes outputs after synchronization.
+  - Tiling reduces redundant global memory reads and improves performance.
+  - Tile size must balance warp alignment, synchronization overhead, and occupancy; **128–256** performs best in practice.
+- **Q2 – NVIDIA Libraries & Unified Memory**
+  - Solved the 1D heat equation using **Unified Memory**, **cuSPARSE (SpMV)**, and **cuBLAS (AXPY, NRM2)**.
+  - FLOPS increase with problem size; small sizes are limited by launch overhead and low parallelism.
+  - Increasing iteration steps reduces relative error and improves convergence.
+  - **Unified Memory prefetching** reduces page migration overhead and gives a small speedup (~6%).
+- **Bonus – Tensor Cores with WMMA**
+  - Implemented GEMM using **WMMA** to utilize NVIDIA Tensor Cores.
+  - Tensor Cores are used in all configurations; increasing warps per block improves utilization with diminishing returns.
+  - WMMA achieves **~1.2×–1.35× speedup** over naive CUDA GEMM.
+  - Performance improves significantly, at the cost of reduced numerical accuracy due to FP16 inputs.
 
 
 
@@ -51,6 +69,7 @@ Folder: `HW3/`
 ├── HW1/            # Assignment I code and local README
 ├── HW2/            # Assignment II code and local README
 ├── HW3/            # Assignment III code and local README
+├── HW4/            # Assignment IV code and local README
 └── README.md       # This file
 ```
 
@@ -106,6 +125,28 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
 
 
 
+### 4. Assignment IV – CUDA 优化、NVIDIA 库与 Tensor Core
+
+目录：`HW4/`
+
+- **Q1 – 一维卷积（1D Convolution）**
+  - 实现了基础版本和基于 **共享内存的 tiled kernel**。
+  - 每个线程块先将输入数据（包含 halo）加载到 shared memory，再进行卷积计算。
+  - Tiled 方法减少了全局内存的重复读取，提高了内存访问效率。
+  - tile size 需要在 warp 对齐、同步开销和 occupancy 之间权衡，实验中 **128–256** 表现最好。
+- **Q2 – NVIDIA 库与统一内存（Unified Memory）**
+  - 使用 **Unified Memory（cudaMallocManaged）**，结合 **cuSPARSE（SpMV）** 和 **cuBLAS（AXPY、NRM2）** 求解一维热传导方程。
+  - 随着问题规模增大，FLOPS 明显提升；小规模时受启动开销和并行度不足限制。
+  - 随着迭代步数增加，解逐渐收敛，**相对误差单调下降**。
+  - 使用 Unified Memory 预取（prefetch）可减少页面迁移开销，带来约 **6% 的性能提升**。
+- **Bonus – Tensor Core（WMMA）**
+  - 使用 **WMMA** 实现矩阵乘法，成功利用 NVIDIA Tensor Cores。
+  - 不同线程块配置下均能使用 Tensor Core，增加每个 block 的 warp 数可提高利用率，但收益逐渐减小。
+  - WMMA 相比普通 CUDA GEMM 有 **约 1.2×–1.35× 的加速**。
+  - 由于使用 FP16 输入，性能提升的同时会带来一定的数值精度损失。
+
+
+
 ## 目录结构
 
 ```
@@ -113,6 +154,7 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
 ├── HW1/            # 作业一代码及本地说明
 ├── HW2/            # 作业二代码及本地说明
 ├── HW3/            # 作业三代码及本地说明
+├── HW4/            # 作业四代码及本地说明
 └── README.md       # 本说明文件
 ```
 
