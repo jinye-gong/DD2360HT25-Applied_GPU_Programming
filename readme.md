@@ -58,7 +58,21 @@ Folder: `assignment_4/`
   - WMMA achieves **~1.2×–1.35× speedup** over naive CUDA GEMM.
   - Performance improves significantly, at the cost of reduced numerical accuracy due to FP16 inputs.
 
+### Final Project – Accelerating GPT-2 Training with Tensor Cores + Mixed Precision
 
+- Built on **Andrej Karpathy’s llm.c**, a minimal CUDA GPT-2 training framework, we benchmark and optimize the GEMM (matrix multiplication) path.
+
+We compare three implementations:
+
+- **base**: handwritten FP32 CUDA kernels (no explicit Tensor Core usage)
+- **update1**: replace all training GEMMs with **cuBLAS SGEMM**, allowing cuBLAS to use highly optimized Tensor Core/TF32 paths on supported GPUs (still FP32 I/O)
+- **update2**: optimize only the first fully-connected (FC) layer using **cublasGemmEx** with selective mixed precision: FP16 inputs/weights + FP32 accumulation/output
+
+Profiling shows the training workload is almost entirely **compute-bound**: about **99.5% of GPU time** is spent in kernel execution, and **matmul_forward_kernel4 accounts for ~70.5%**, so we focus on GEMM optimization.
+
+Results: throughput increases with batch size; **update1 improves throughput by ~20%** across all batch sizes, while **update2 is ~5% faster than base** but **10–15% slower than update1**.
+
+Quality check: compared to base, the final weights from update1/update2 are very close (**cosine similarity > 0.99995**, **rel_L2 ≈ 0.9%**, **max_abs < 0.084**), indicating only minor numerical differences.
 
 
 
@@ -70,6 +84,7 @@ Folder: `assignment_4/`
 ├── HW2/            # Assignment II code and local README
 ├── HW3/            # Assignment III code and local README
 ├── HW4/            # Assignment IV code and local README
+├── final_prj/      # final project code and local README
 └── README.md       # This file
 ```
 
@@ -134,16 +149,40 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
   - 每个线程块先将输入数据（包含 halo）加载到 shared memory，再进行卷积计算。
   - Tiled 方法减少了全局内存的重复读取，提高了内存访问效率。
   - tile size 需要在 warp 对齐、同步开销和 occupancy 之间权衡，实验中 **128–256** 表现最好。
+  
 - **Q2 – NVIDIA 库与统一内存（Unified Memory）**
   - 使用 **Unified Memory（cudaMallocManaged）**，结合 **cuSPARSE（SpMV）** 和 **cuBLAS（AXPY、NRM2）** 求解一维热传导方程。
   - 随着问题规模增大，FLOPS 明显提升；小规模时受启动开销和并行度不足限制。
   - 随着迭代步数增加，解逐渐收敛，**相对误差单调下降**。
   - 使用 Unified Memory 预取（prefetch）可减少页面迁移开销，带来约 **6% 的性能提升**。
+  
 - **Bonus – Tensor Core（WMMA）**
   - 使用 **WMMA** 实现矩阵乘法，成功利用 NVIDIA Tensor Cores。
   - 不同线程块配置下均能使用 Tensor Core，增加每个 block 的 warp 数可提高利用率，但收益逐渐减小。
   - WMMA 相比普通 CUDA GEMM 有 **约 1.2×–1.35× 的加速**。
   - 由于使用 FP16 输入，性能提升的同时会带来一定的数值精度损失。
+  
+  
+
+### Final Project  – Tensor Core + Mixed Precision 加速 GPT-2 训练
+
+- 基于 **Karpathy 的 llm.c** 最小 CUDA GPT-2 训练框架，对矩阵乘（GEMM）路径做加速实验对照。
+
+对比三种实现：
+
+- **base**：手写 FP32 CUDA kernel（不显式用 Tensor Core）
+
+**update1**：将训练中的 GEMM 全部改为 **cuBLAS SGEMM**，让 cuBLAS 在支持 GPU 上自动走 Tensor Core/TF32 等高优化路径（仍保持 FP32 I/O）
+
+**update2**：只优化第一层（首个 FC），使用 **cublasGemmEx** 做选择性混合精度：FP16 输入/权重 + FP32 累加/输出
+
+Profiling 显示训练几乎是 **纯计算瓶颈**：约 **99.5% GPU 时间在 kernel 执行**，其中 **matmul_forward_kernel4 约占 70.5%**，因此重点优化 GEMM。
+
+结果：吞吐随 batch size 增大而上升；**update1 在所有 batch size 下约提升 ~20% throughput**，**update2 约比 base 快 ~5%** 但比 update1 低 10–15%。
+
+质量检查：与 base 相比，update1/update2 的最终权重 **cosine similarity > 0.99995**，**rel_L2 ≈ 0.9%**，**max_abs < 0.084**，数值差异很小。
+
+
 
 
 
@@ -155,6 +194,7 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
 ├── HW2/            # 作业二代码及本地说明
 ├── HW3/            # 作业三代码及本地说明
 ├── HW4/            # 作业四代码及本地说明
+├── final_prj/      # 最终项目代码及本地说明
 └── README.md       # 本说明文件
 ```
 
