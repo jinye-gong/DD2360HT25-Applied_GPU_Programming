@@ -164,23 +164,17 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
   
   
 
-### Final Project  – Tensor Core + Mixed Precision 加速 GPT-2 训练
+### Final Project – Tensor Core + Mixed Precision 加速 GPT-2 训练
+目录：`final_prj/`
 
-- 基于 **Karpathy 的 llm.c** 最小 CUDA GPT-2 训练框架，对矩阵乘（GEMM）路径做加速实验对照。
-
-对比三种实现：
-
-- **base**：手写 FP32 CUDA kernel（不显式用 Tensor Core）
-
-**update1**：将训练中的 GEMM 全部改为 **cuBLAS SGEMM**，让 cuBLAS 在支持 GPU 上自动走 Tensor Core/TF32 等高优化路径（仍保持 FP32 I/O）
-
-**update2**：只优化第一层（首个 FC），使用 **cublasGemmEx** 做选择性混合精度：FP16 输入/权重 + FP32 累加/输出
-
-Profiling 显示训练几乎是 **纯计算瓶颈**：约 **99.5% GPU 时间在 kernel 执行**，其中 **matmul_forward_kernel4 约占 70.5%**，因此重点优化 GEMM。
-
-结果：吞吐随 batch size 增大而上升；**update1 在所有 batch size 下约提升 ~20% throughput**，**update2 约比 base 快 ~5%** 但比 update1 低 10–15%。
-
-质量检查：与 base 相比，update1/update2 的最终权重 **cosine similarity > 0.99995**，**rel_L2 ≈ 0.9%**，**max_abs < 0.084**，数值差异很小。
+- 基于 **Karpathy 的 llm.c** 最小 CUDA GPT-2 训练框架，对 GEMM（矩阵乘）路径做加速对照实验
+- 对比三种实现：
+  - **base**：手写 FP32 CUDA kernel（不显式使用 Tensor Core）
+  - **update1**：将训练中的 GEMM 全部替换为 **cuBLAS SGEMM**，在支持 GPU 上自动使用 Tensor Core/TF32 等高优化路径（仍保持 FP32 I/O）
+  - **update2**：仅优化第一层（首个 FC），使用 **cublasGemmEx** 做选择性混合精度：FP16 输入/权重 + FP32 累加/输出
+- Profiling 结果表明训练几乎是 **纯计算瓶颈**：约 **99.5% GPU 时间在 kernel 执行**，其中 **matmul_forward_kernel4 约占 70.5%**，因此重点优化 GEMM
+- 性能结果：吞吐随 batch size 增大而上升；**update1 约提升 ~20% throughput**，**update2 约比 base 快 ~5%**，但比 update1 低 10–15%
+- 质量检查：与 base 相比，update1/update2 最终权重差异很小（**cosine similarity > 0.99995**，**rel_L2 ≈ 0.9%**，**max_abs < 0.084**）
 
 
 
