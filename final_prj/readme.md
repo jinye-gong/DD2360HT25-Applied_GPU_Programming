@@ -83,5 +83,5 @@ From repo root:
 
 ## Output
 
-![plots_bench_bar](/home/reticent/Desktop/New Folder 1/DD2360HT25-Applied_GPU_Programming/final_prj/plots_bench_bar.png)
+![Benchmark bar](plots_bench_bar.png)
 
