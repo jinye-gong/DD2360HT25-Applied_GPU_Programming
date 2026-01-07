@@ -1,6 +1,6 @@
 # DD2360 HT25 – GPU Projects
 
-This repo contains two GPU programming projects for the course **DD2360 HT25**.
+This repo contains five GPU programming projects for the course **DD2360 HT25**.
 
 ## Projects
 
@@ -35,8 +35,6 @@ Folder: `HW3/`
   - Baseline `vecAdd`: one H2D memcpy + one kernel + one D2H memcpy (no streams).
   - Streamed `vecAdd`: split the vector into segments and process them with 4 CUDA streams using async H2D / kernel / D2H to overlap copy and compute.
   - Measure total time, show small–medium speedup (~1.3× at best) vs. baseline, and study how different segment sizes affect performance (too small → overhead, too large → less overlap).
-
-
 
 ### 4. Assignment IV – CUDA Optimization, NVIDIA Libraries & Tensor Cores
 
@@ -102,7 +100,7 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
 
 
 
-本仓库包含 DD2360 HT25 课程的两个 GPU 编程项目。
+本仓库包含 DD2360 HT25 课程的五个 GPU 编程项目。
 
 ## 项目简介
 
@@ -138,9 +136,7 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
   - Streams 版本：将向量分段，用 4 个 CUDA streams 做异步 H2D / kernel / D2H，实现拷贝与计算重叠。
   - 比较总时间并给出加速比（最佳约 1.3×），同时分析不同 segment size 对性能的影响（太小开销大，太大重叠不足）。
 
-
-
-### 4. Assignment IV – CUDA 优化、NVIDIA 库与 Tensor Core
+### 4.  作业四 – CUDA 优化、NVIDIA 库与 Tensor Core
 
 目录：`HW4/`
 
@@ -164,7 +160,7 @@ Please do **not** use this repository for plagiarism, and do **not** redistribut
   
   
 
-### Final Project – Tensor Core + Mixed Precision 加速 GPT-2 训练
+### 最终项目 – Tensor Core + Mixed Precision 加速 GPT-2 训练
 目录：`final_prj/`
 
 - 基于 **Karpathy 的 llm.c** 最小 CUDA GPT-2 训练框架，对 GEMM（矩阵乘）路径做加速对照实验
