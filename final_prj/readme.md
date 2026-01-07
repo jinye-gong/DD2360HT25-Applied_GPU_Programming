@@ -80,3 +80,8 @@ From repo root:
 # Update2 
 ./train_gpt2_fp32_update2 -b 4 -t 256 
 ```
+
+## Output
+
+![plots_bench_bar](/home/reticent/Desktop/New Folder 1/DD2360HT25-Applied_GPU_Programming/final_prj/plots_bench_bar.png)
+
